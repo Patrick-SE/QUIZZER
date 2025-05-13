@@ -6,7 +6,7 @@ import { useQuiz } from '../../context/QuizContext';
 import { addQuiz, deleteQuiz, fetchQuizzes, addQuestion as addQuestionToDB, fetchQuestions } from "../../services/api";
 
 export default function QuizzesContent() {
-  const { quizzes, setQuizzes, quizQuestions } = useQuiz(); 
+  const { quizzes, setQuizzes, quizQuestions, setQuizQuestions } = useQuiz();
   const [modalVisible, setModalVisible] = useState(false);
   const [quizName, setQuizName] = useState('');
   const [selectedQuiz, setSelectedQuiz] = useState(null);
@@ -17,8 +17,8 @@ export default function QuizzesContent() {
 
   useEffect(() => {
     setQuizzes(prevQuizzes => [...prevQuizzes]);
-  
-  }, [quizQuestions]); 
+
+  }, [quizQuestions]);
 
   const loadQuizzes = async () => {
     const data = await fetchQuizzes();
@@ -28,14 +28,14 @@ export default function QuizzesContent() {
 
   const handleAddQuiz = async () => {
     if (quizName.trim() !== '') {
-        const success = await addQuiz(quizName.trim());
-        if (success) {
-            loadQuizzes();
-            setQuizName('');
-            setModalVisible(false);
-        }
+      const success = await addQuiz(quizName.trim());
+      if (success) {
+        loadQuizzes();
+        setQuizName('');
+        setModalVisible(false);
+      }
     }
-  };  
+  };
 
   const handleCancel = () => {
     setQuizName('');
@@ -44,16 +44,25 @@ export default function QuizzesContent() {
 
   const handleDeleteQuiz = async () => {
     if (selectedQuiz) {
+      console.log("🧹 Delete button clicked!");
+      console.log("Selected quiz to delete:", selectedQuiz);
       console.log("Attempting to delete quiz:", selectedQuiz.id);
-  
+
       const success = await deleteQuiz(selectedQuiz.id);
       console.log("Quiz deletion success:", success);
-  
+
       if (success) {
+        // deleteQuizFromContext(selectedQuiz.id)
         setConfirmDeleteModalVisible(false);
         setActionModalVisible(false);
         setSelectedQuiz(null);
-  
+
+        setQuizQuestions(prev => {
+          const updated = { ...prev };
+          delete updated[selectedQuiz.id];
+          return updated;
+        });
+
         await loadQuizzes();
       } else {
         console.error("Failed to delete quiz!");
@@ -61,21 +70,21 @@ export default function QuizzesContent() {
     }
   };
 
-  const addQuestion = async (quizId, questionData) => {
-    const success = await addQuestionToDB(quizId, questionData);
-    if (!success) {
-      console.error("❌ Failed to save question to database");
-      return;
-    }
+  // const addQuestion = async (quizId, questionData) => {
+  //   const success = await addQuestionToDB(quizId, questionData);
+  //   if (!success) {
+  //     console.error("❌ Failed to save question to database");
+  //     return;
+  //   }
 
-    // Fetch the updated list of questions from the DB
-    const updatedQuestions = await fetchQuestions(quizId);
+  //   // Fetch the updated list of questions from the DB
+  //   const updatedQuestions = await fetchQuestions(quizId);
 
-    setQuizQuestions(prev => ({
-      ...prev,
-      [quizId]: updatedQuestions
-    }));
-  };
+  //   setQuizQuestions(prev => ({
+  //     ...prev,
+  //     [quizId]: updatedQuestions
+  //   }));
+  // };
 
   return (
     <View style={styles.container}>
@@ -84,7 +93,7 @@ export default function QuizzesContent() {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => router.push({ pathname: '/(tabs)/quiz-screen', params: { name: item.name, id: item.id.toString() }, })  }
+            onPress={() => router.push({ pathname: '/(tabs)/quiz-screen', params: { name: item.name, id: item.id.toString() }, })}
             onLongPress={() => {
               setSelectedQuiz(item);
               setActionModalVisible(true);
@@ -162,7 +171,7 @@ export default function QuizzesContent() {
               <Text style={{ color: 'red' }}>Delete</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setActionModalVisible(false)}>
-              <Text style={[styles.cancel, {marginRight: 0, paddingVertical: 10,}]}>Back</Text>
+              <Text style={[styles.cancel, { marginRight: 0, paddingVertical: 10, }]}>Back</Text>
             </TouchableOpacity>
           </View>
         </View>

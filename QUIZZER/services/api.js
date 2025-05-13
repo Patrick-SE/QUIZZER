@@ -2,15 +2,24 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
+const getHost = () => {
+  const fallback = 'localhost';
 
-// Automatically detect local IP from Expo dev tools (safe across platforms)
-const host = Platform.select({
-  ios: 'localhost',
-  android: Constants.expoConfig?.hostUri?.split(':')[0], // safer for Android physical devices
-  default: Constants.expoConfig?.hostUri?.split(':')[0], // fallback
-});
+  // Try newer manifest2 (used in SDK 49+ with Expo Go)
+  const manifestDebuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost;
 
-const BASE_URL = `http://${host}/quizzer_backend`;
+  // Fallback to old manifest for older SDKs
+  const legacyHost = Constants.manifest?.debuggerHost;
+
+  const fullHost = manifestDebuggerHost || legacyHost;
+
+  if (!fullHost) return fallback;
+
+  return fullHost.split(':')[0]; // extract just the IP
+};
+
+const BASE_URL = `http://${getHost()}/quizzer_backend`;
+console.log("🔗 BASE_URL:", BASE_URL);
 
 // const BASE_URL = "http://192.168.1.13:8081/quizzer_backend";
 
@@ -72,6 +81,7 @@ export const deleteQuiz = async (quizId) => {
         { id: quizId },
         { headers: { "Content-Type": "application/json" } }
       );
+      console.log("🔁 deleteQuiz response:", response.data);
       return response.data.success;
     } catch (error) {
       console.error("Error deleting quiz:", error);

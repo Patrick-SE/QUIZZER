@@ -41,7 +41,8 @@ export default function QuizReview() {
     <View style={styles.container}>
 
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push({ pathname: '/(tabs)/top-tabs' })}>
+        <TouchableOpacity onPress={() => router.back()}>
+        {/*</TouchableOpacity><TouchableOpacity onPress={() => router.push({ pathname: '/(tabs)/top-tabs' })}>*/}
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{'Review'}</Text>

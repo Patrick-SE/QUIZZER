@@ -3,13 +3,12 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useQuiz } from '../../context/QuizContext';
-import { addQuiz, deleteQuiz, fetchQuizzes, addQuestion as addQuestionToDB, fetchQuestions } from "../../services/api"; // ✅ Import API helper
+import { addQuiz, deleteQuiz, fetchQuizzes, addQuestion as addQuestionToDB, fetchQuestions } from "../../services/api";
 
 export default function QuizzesContent() {
-  const { quizzes, setQuizzes, quizQuestions } = useQuiz(); // ✅ Includes quizQuestions  
+  const { quizzes, setQuizzes, quizQuestions } = useQuiz(); 
   const [modalVisible, setModalVisible] = useState(false);
   const [quizName, setQuizName] = useState('');
-  const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [actionModalVisible, setActionModalVisible] = useState(false);
   const [confirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
@@ -17,25 +16,23 @@ export default function QuizzesContent() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("Quiz Questions from Context:", quizQuestions); // ✅ Debugging log
+    setQuizzes(prevQuizzes => [...prevQuizzes]);
   
-    setQuizzes(prevQuizzes => [...prevQuizzes]); // ✅ Force UI refresh
-  
-  }, [quizQuestions]); // ✅ Refresh when questions change  
+  }, [quizQuestions]); 
 
   const loadQuizzes = async () => {
-    const data = await fetchQuizzes(); // ✅ Fetch quizzes via PHP API
-    console.log("Quizzes from MySQL:", data); // ✅ Debugging: Check the console
+    const data = await fetchQuizzes();
+    console.log("Quizzes from MySQL:", data);
     setQuizzes(data);
   };
 
   const handleAddQuiz = async () => {
     if (quizName.trim() !== '') {
-        const success = await addQuiz(quizName.trim()); // ✅ Send request to MySQL
+        const success = await addQuiz(quizName.trim());
         if (success) {
-            loadQuizzes(); // ✅ Refresh list after adding
-            setQuizName(''); // ✅ Clear input field
-            setModalVisible(false); // ✅ Close modal
+            loadQuizzes();
+            setQuizName('');
+            setModalVisible(false);
         }
     }
   };  
@@ -53,11 +50,11 @@ export default function QuizzesContent() {
       console.log("Quiz deletion success:", success);
   
       if (success) {
-        setConfirmDeleteModalVisible(false); // ✅ Close modal first
-        setActionModalVisible(false); // ✅ Close action modal too
-        setSelectedQuiz(null); // ✅ Clear selected quiz immediately
+        setConfirmDeleteModalVisible(false);
+        setActionModalVisible(false);
+        setSelectedQuiz(null);
   
-        await loadQuizzes(); // ✅ Refresh list after state updates
+        await loadQuizzes();
       } else {
         console.error("Failed to delete quiz!");
       }
@@ -71,7 +68,7 @@ export default function QuizzesContent() {
       return;
     }
 
-    // ✅ Fetch the updated list of questions from the DB
+    // Fetch the updated list of questions from the DB
     const updatedQuestions = await fetchQuestions(quizId);
 
     setQuizQuestions(prev => ({
@@ -87,7 +84,7 @@ export default function QuizzesContent() {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => router.push({ pathname: '/(tabs)/quiz-screen', params: { name: item.name, id: item.id.toString() }, })  } // ✅ also pass id
+            onPress={() => router.push({ pathname: '/(tabs)/quiz-screen', params: { name: item.name, id: item.id.toString() }, })  }
             onLongPress={() => {
               setSelectedQuiz(item);
               setActionModalVisible(true);

@@ -14,14 +14,14 @@ export default function QuizSummary() {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleReview = () => {
-    router.push({
-      pathname: '/(tabs)/quiz-review',
-      params: { allAnswers: JSON.stringify(allAnswers) }
-    });
-  };
+  // const handleReview = () => {
+  //   router.push({
+  //     pathname: '/(tabs)/quiz-review',
+  //     params: { allAnswers: JSON.stringify(allAnswers) }
+  //   });
+  // };
 
-const handleRetake = (type) => {
+  const handleRetake = (type) => {
     setModalVisible(false);
     const questionsToRetake = type === 'all' ? allAnswers : wrongAnswers;
 
@@ -32,90 +32,67 @@ const handleRetake = (type) => {
         questions: JSON.stringify(questionsToRetake)
       }
     });
-};
-
-//   const handleRetake = (type) => {
-//     setModalVisible(false);
-//     const filtered = type === 'wrong'
-//       ? wrongAnswers
-//       : [...correctAnswers, ...wrongAnswers];
-
-//     router.push({
-//       pathname: '/(tabs)/quiz-taking',
-//       params: { questions: JSON.stringify(filtered) }
-//     });
-//   };
-
-  const allCorrect = wrongAnswers.length === 0;
+  };
 
   return (
     <View style={styles.container}>
 
-        <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.push({ pathname: '/(tabs)/top-tabs' })}>
-                <Ionicons name="arrow-back" size={24} color="black" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>{'Summary'}</Text>
-        </View>
-
-        <Text style={styles.stat}>Correct: {correctAnswers.length}</Text>
-        <Text style={styles.stat}>Wrong: {wrongAnswers.length}</Text>
-
-        <TouchableOpacity style={styles.button} onPress={() => {
-            router.push({
-            pathname: '/(tabs)/quiz-review',
-            params: { allAnswers: JSON.stringify(allAnswers) }
-            });
-        }}>
-            <Text style={styles.buttonText}>Review</Text>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.push({ pathname: '/(tabs)/top-tabs' })}>
+          <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.button} onPress={handleReview}>
-            <Text style={styles.buttonText}>Review</Text>
-        </TouchableOpacity> */}
+        <Text style={styles.headerTitle}>{'Summary'}</Text>
+      </View>
 
-        {wrongAnswers.length > 0 && (
-            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-            <Text style={styles.buttonText}>Retake</Text>
-            </TouchableOpacity>
-        )}
-        {/* {!allCorrect && (
-            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-            <Text style={styles.buttonText}>Retake</Text>
-            </TouchableOpacity>
-        )} */}
+      <Text style={styles.stat}>Correct: {correctAnswers.length}</Text>
+      <Text style={styles.stat}>Wrong: {wrongAnswers.length}</Text>
 
-        <RetakeModal
-            visible={modalVisible}
-            onClose={() => setModalVisible(false)}
-            onSelect={handleRetake}
-        />
+      <TouchableOpacity style={styles.button} onPress={() => {
+        router.push({
+          pathname: '/(tabs)/quiz-review',
+          params: { allAnswers: JSON.stringify(allAnswers) }
+        });
+      }}>
+        <Text style={styles.buttonText}>Review</Text>
+      </TouchableOpacity>
+
+      {wrongAnswers.length > 0 && (
+        <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+          <Text style={styles.buttonText}>Retake</Text>
+        </TouchableOpacity>
+      )}
+
+      <RetakeModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSelect={handleRetake}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-    // header: { fontSize: 20, fontWeight: 'bold', marginBottom: 20 },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        marginBottom: 20,
-    },
-        headerTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginTop: -2,
-        padding: 5,
-    },
-    stat: { fontSize: 16, marginVertical: 5 },
-    button: {
-        backgroundColor: '#009688',
-        padding: 15,
-        marginTop: 20,
-        borderRadius: 10,
-        alignItems: 'center'
-    },
-    buttonText: { color: 'white', fontSize: 16 },
-    
+  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginBottom: 20,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: -2,
+    padding: 5,
+  },
+  stat: { fontSize: 16, marginVertical: 5 },
+  button: {
+    backgroundColor: '#009688',
+    padding: 15,
+    marginTop: 20,
+    borderRadius: 10,
+    alignItems: 'center'
+  },
+  buttonText: { color: 'white', fontSize: 16 },
+
 });

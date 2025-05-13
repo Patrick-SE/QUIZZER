@@ -2,26 +2,26 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
-import { useQuiz } from '../../context/QuizContext'; // ✅ Import QuizContext
-import { updateQuiz } from '../../services/api'; // ✅ Import API function correctly
+import { useQuiz } from '../../context/QuizContext';
+import { updateQuiz } from '../../services/api';
 
 export default function EditQuiz() {
   const { name } = useLocalSearchParams();
   const [newName, setNewName] = useState(name || '');
   const router = useRouter();
-  const { quizzes } = useQuiz(); // ✅ Get quizzes from context
+  const { quizzes } = useQuiz();
 
   const handleSave = async () => {
     if (name && newName.trim()) {
       console.log("Renaming quiz:", name, "New Name:", newName);
   
-      const quizToUpdate = quizzes.find(q => q.name === name); // ✅ Find quiz by name to get its ID
+      const quizToUpdate = quizzes.find(q => q.name === name);
       if (!quizToUpdate) {
         console.error("Quiz not found!");
         return;
       }
   
-      const success = await updateQuiz(quizToUpdate.id, newName.trim()); // ✅ Use ID, not name
+      const success = await updateQuiz(quizToUpdate.id, newName.trim());
       console.log("Raw API Response:", success);
   
       if (success) {

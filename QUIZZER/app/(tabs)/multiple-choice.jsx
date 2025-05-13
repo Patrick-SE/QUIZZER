@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useQuiz } from '../../context/QuizContext'; // ✅ Import context
+import { useQuiz } from '../../context/QuizContext';
 import { updateQuestionInDB } from '../../services/api';
 
 export default function MultipleChoiceScreen() {
@@ -10,23 +10,23 @@ export default function MultipleChoiceScreen() {
   const [errorMessage, setErrorMessage] = useState('');
   const [errorVisible, setErrorVisible] = useState(false);
 
-  const { addQuestion } = useQuiz(); // ✅ Get function to store questions
+  const { addQuestion } = useQuiz();
 
   const { quizName, quizId, questionId } = useLocalSearchParams();
   const { quizQuestions, updateQuestion } = useQuiz();
   const router = useRouter();
-  
+
   const questionData = quizQuestions[quizId]?.find(q => q.id === parseInt(questionId)) || {};
-  
+
   if (!questionData) {
-    return <Text>Error: Question not found.</Text>; // ✅ Prevent rendering an empty object
+    return <Text>Error: Question not found.</Text>;
   }
 
   const [question, setQuestion] = useState(questionData.question || '');
   const [correctAnswer, setCorrectAnswer] = useState(questionData.correctAnswer || '');
   const [wrongAnswer1, setWrongAnswer1] = useState(questionData.wrongAnswers?.[0] || '');
   const [wrongAnswer2, setWrongAnswer2] = useState(questionData.wrongAnswers?.[1] || '');
-  const [wrongAnswer3, setWrongAnswer3] = useState(questionData.wrongAnswers?.[2] || '');  
+  const [wrongAnswer3, setWrongAnswer3] = useState(questionData.wrongAnswers?.[2] || '');
 
   const handleSave = async () => {
     if (!question.trim()) {
@@ -34,11 +34,11 @@ export default function MultipleChoiceScreen() {
       setErrorVisible(true);
       return;
     }
-  
+
     const formattedQuestion = question.trim().toLowerCase();
     const answers = [correctAnswer, wrongAnswer1, wrongAnswer2, wrongAnswer3]
       .map(ans => ans.trim().toLowerCase());
-  
+
     if (answers.includes(formattedQuestion)) {
       setErrorMessage("The question and answers must be different.");
       setErrorVisible(true);
@@ -46,7 +46,7 @@ export default function MultipleChoiceScreen() {
     }
 
     if (questionId) {
-      // ✅ Update both MySQL and context
+      // Update both MySQL and context
       const response = await updateQuestionInDB(questionId, {
         type: 'multiple-choice',
         question: question.trim(),
@@ -56,7 +56,7 @@ export default function MultipleChoiceScreen() {
         answerEquals: ''
       });
 
-      console.log('Update response:', response); // 🔍 Check this
+      console.log('Update response:', response);
 
       updateQuestion(
         quizId,
@@ -78,15 +78,15 @@ export default function MultipleChoiceScreen() {
     }
 
     router.push({ pathname: '/(tabs)/quiz-screen', params: { name: quizName, id: quizId } });
-  };  
+  };
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-      <TouchableOpacity onPress={() => router.push({ pathname: '/(tabs)/quiz-screen', params: { name: quizName } })}>
-        <Ionicons name="arrow-back" size={24} color="black" />
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push({ pathname: '/(tabs)/quiz-screen', params: { name: quizName } })}>
+          <Ionicons name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Multiple Choice</Text>
         <TouchableOpacity onPress={handleSave}>
           <Ionicons name="save" size={24} color="#009688" />

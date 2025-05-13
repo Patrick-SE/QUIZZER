@@ -1,30 +1,54 @@
 import axios from 'axios';
+import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
-const BASE_URL = "http://192.168.1.13/quizzer_backend";
+
+// Automatically detect local IP from Expo dev tools (safe across platforms)
+const host = Platform.select({
+  ios: 'localhost',
+  android: Constants.expoConfig?.hostUri?.split(':')[0], // safer for Android physical devices
+  default: Constants.expoConfig?.hostUri?.split(':')[0], // fallback
+});
+
+const BASE_URL = `http://${host}/quizzer_backend`;
+
+// const BASE_URL = "http://192.168.1.13:8081/quizzer_backend";
+
+console.log(BASE_URL);
 
 export const addQuiz = async (quizName) => {
     try {
       const response = await axios.post(`${BASE_URL}/add-quiz.php`, 
         { name: quizName },
-        { headers: { "Content-Type": "application/json" } } // ✅ Explicitly set headers
+        { headers: { "Content-Type": "application/json" } }
       );
       return response.data.success;
     } catch (error) {
       console.error("Error adding quiz:", error);
-      return false;
+      return false; 
     }
 };
 
+// export const fetchQuizzes = async () => {
+//     try {
+//       const response = await axios.get(`${BASE_URL}/get-quizzes.php`, {
+//         headers: { "Content-Type": "application/json" },
+//       });
+//       return response.data;
+//     } catch (error) {
+//       console.error("Error fetching quizzes:", error);
+//       return [];
+//     }
+// };
+
 export const fetchQuizzes = async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/get-quizzes.php`, {
-        headers: { "Content-Type": "application/json" }, // ✅ Explicitly set headers
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching quizzes:", error);
-      return [];
-    }
+  try {
+    const response = await axios.get(`${BASE_URL}/get-quizzes.php`);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Full Axios error:", error.toJSON?.() || error);
+    return [];
+  }
 };
 
 export const updateQuiz = async (quizId, newName) => {
@@ -34,8 +58,8 @@ export const updateQuiz = async (quizId, newName) => {
       { headers: { "Content-Type": "application/json" } }
     );
 
-    console.log("Raw API Response:", response.data); // ✅ Debugging log
-    return response.data.success; // ✅ Extracting success flag
+    console.log("Raw API Response:", response.data);
+    return response.data.success;
   } catch (error) {
     console.error("Error updating quiz:", error);
     return false;
@@ -46,7 +70,7 @@ export const deleteQuiz = async (quizId) => {
     try {
       const response = await axios.post(`${BASE_URL}/delete-quiz.php`,
         { id: quizId },
-        { headers: { "Content-Type": "application/json" } } // ✅ Explicitly set headers
+        { headers: { "Content-Type": "application/json" } }
       );
       return response.data.success;
     } catch (error) {
@@ -65,23 +89,12 @@ export const addQuestionToDB = async (quizId, questionData) => {
       headers: { "Content-Type": "application/json" }
     });
 
-    return response.data; // returns { success: true, id: 123 }
+    return response.data;
   } catch (error) {
     console.error("Error adding question:", error);
     return { success: false };
   }
 };
-
-// // Fetch questions by quiz ID
-// export const fetchQuestions = async (quizId) => {
-//   try {
-//     const response = await axios.get(`${BASE_URL}/get-questions.php?quiz_id=${quizId}`);
-//     return response.data; // ✅ Just return the questions
-//   } catch (error) {
-//     console.error('Error fetching questions:', error);
-//     return [];
-//   }
-// };
 
 // Fetch all questions for a specific quiz
 export async function fetchQuestions(quizId) {

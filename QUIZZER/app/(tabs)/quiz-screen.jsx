@@ -3,7 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useQuiz } from '../../context/QuizContext';
-import { deleteQuestion } from "../../services/api"; // ✅ Import delete function
+import { deleteQuestion } from "../../services/api";
 
 export default function QuizScreen() {
   const params = useLocalSearchParams();
@@ -17,7 +17,7 @@ export default function QuizScreen() {
   const [confirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
 
-  // ✅ Fetch latest from context using quizId instead of quizName
+  // Fetch latest from context using quizId instead of quizName
   const questions = quizQuestions[quizId] || [];
 
   useEffect(() => {
@@ -25,14 +25,11 @@ export default function QuizScreen() {
     if (params.id) setQuizId(params.id);
   }, [params.name, params.id]);
 
-  // ✅ Debug what's loaded
-  console.log("📋 Questions in quiz-screen:", questions);
-
   const handleSelect = (screen) => {
     setModalVisible(false);
     setTimeout(() => router.push({
       pathname: `/(tabs)/${screen}`,
-      params: { quizName, quizId } // ✅ Pass both
+      params: { quizName, quizId }
     }), 100);
   };
 
@@ -45,10 +42,10 @@ export default function QuizScreen() {
       console.log("Delete response:", success);
 
       setConfirmDeleteModalVisible(false);
-      setSelectedQuestion(null); // ✅ Reset selection regardless
+      setSelectedQuestion(null);
 
       if (success) {
-        removeQuestion(quizId, selectedQuestion.id); // ✅ Remove from local state
+        removeQuestion(quizId, selectedQuestion.id);
       } else {
         console.error("❌ Failed to delete question");
       }

@@ -30,8 +30,8 @@ export default function ShortTextScreen() {
     let updatedAnswerContains = answerContains.trim();
     let updatedAnswerEquals = answerEquals.trim();
   
-    if (updatedAnswerContains) updatedAnswerEquals = ''; // ✅ Clear "Equals" when "Contains" is used
-    else if (updatedAnswerEquals)  updatedAnswerContains = ''; // ✅ Clear "Contains" when "Equals" is used
+    if (updatedAnswerContains) updatedAnswerEquals = '';
+    else if (updatedAnswerEquals)  updatedAnswerContains = '';
   
     if (questionId) {
       const response = await updateQuestionInDB(questionId, {

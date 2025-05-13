@@ -11,23 +11,19 @@ export default function QuizReviewDetails() {
   const isCorrect =
     question.type === 'short-text'
       ? (question.answerEquals?.trim().toLowerCase() === question.userAnswer?.trim().toLowerCase() ||
-         (question.answerContains &&
+        (question.answerContains &&
           [...question.answerContains.trim().toLowerCase()].some(char =>
             question.userAnswer?.toLowerCase().includes(char))))
       : question.userAnswer === question.correctAnswer;
 
   return (
     <View style={styles.container}>
-        {/* <TouchableOpacity onPress={() => router.back()}>
-            <Text style={styles.backText}>{'<- Review'}</Text>
-        </TouchableOpacity> */}
-
-        <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()}>
-                <Ionicons name="arrow-back" size={24} color="black" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>{'Review'}</Text>
-        </View>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{'Review'}</Text>
+      </View>
 
       <View style={styles.card}>
         <Text style={styles.label}>Question</Text>
@@ -62,36 +58,35 @@ export default function QuizReviewDetails() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-    // backText: { fontSize: 18, fontWeight: 'bold', marginBottom: 20 },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        marginBottom: 20,
-    },
-        headerTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginTop: -2,
-        padding: 5,
-    },
-    card: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 15
-    },
-    label: { fontSize: 14, color: '#999', marginBottom: 5 },
-    content: { fontSize: 16, fontWeight: 'bold', color: '#333' },
-    resultRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10
-    },
-    resultText: {
-        fontSize: 16,
-        fontWeight: 'bold'
-    }
+  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginBottom: 20,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: -2,
+    padding: 5,
+  },
+  card: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15
+  },
+  label: { fontSize: 14, color: '#999', marginBottom: 5 },
+  content: { fontSize: 16, fontWeight: 'bold', color: '#333' },
+  resultRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10
+  },
+  resultText: {
+    fontSize: 16,
+    fontWeight: 'bold'
+  }
 });

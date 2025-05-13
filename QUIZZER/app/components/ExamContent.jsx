@@ -1,23 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router'; // ✅ Add this to ExamContent.jsx
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, Modal, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
-import { useQuiz } from '../../context/QuizContext'; // ✅ Access stored quizzes
+import { useQuiz } from '../../context/QuizContext';
 
 export default function ExamContent() {
   const { quizzes, selectedQuizzes, updateSelectedQuizzes } = useQuiz();
   const [modalVisible, setModalVisible] = useState(false);
-  const [showAnswers, setShowAnswers] = useState(true); // ✅ Toggle correct answers visibility 
+  const [showAnswers, setShowAnswers] = useState(true);
 
   const router = useRouter();
 
-  // ✅ Handle quiz selection toggle
-  // const toggleQuizSelection = (quizName) => {
-  //   updateSelectedQuizzes(selectedQuizzes.includes(quizName)
-  //     ? selectedQuizzes.filter(q => q !== quizName)
-  //     : [...selectedQuizzes, quizName]
-  //   );
-  // };
   const toggleQuizSelection = (quiz) => {
     updateSelectedQuizzes(
       selectedQuizzes.find(q => q.id === quiz.id)
@@ -39,9 +32,6 @@ export default function ExamContent() {
       {/* Quiz Selection */}
       <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.quizSelection}>
         <Text style={styles.label}>Quizzes</Text>
-        {/* <Text style={styles.selectedQuizText}>
-          {selectedQuizzes.length ? selectedQuizzes.join(', ') : 'Tap to choose quizzes'}
-        </Text> */}
         <Text style={styles.selectedQuizText}>
           {selectedQuizzes.length ? selectedQuizzes.map(q => q.name).join(', ') : 'Tap to choose quizzes'}
         </Text>
@@ -63,7 +53,6 @@ export default function ExamContent() {
       <TouchableOpacity 
         style={styles.fab}
         onPress={startQuiz}
-        // onPress={() => router.push({ pathname: '/(tabs)/quiz-taking', params: { quizzes: selectedQuizzes } })}
       >
         <Ionicons name="play-circle" size={80} color="#009688" />
       </TouchableOpacity>
@@ -77,7 +66,6 @@ export default function ExamContent() {
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => toggleQuizSelection(item)} style={styles.modalItem}>
-                  {/* <Ionicons name={selectedQuizzes.includes(item) ? "checkbox" : "square-outline"} size={24} color="#009688" /> */}
                   <Ionicons name={selectedQuizzes.find(q => q.id === item.id) ? "checkbox" : "square-outline"} size={24} color="#009688" />
                   <Text style={styles.quizName}>{item.name}</Text>
                 </TouchableOpacity>

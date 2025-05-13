@@ -7,7 +7,7 @@ import QuizzesContent from '../components/QuizzesContent';
 
 export default function TopTabsScreen() {
   const [activeTab, setActiveTab] = useState('exam');
-  const { quizzes, setQuizzes } = useQuiz(); // 💾 This keeps your quizzes alive even when switching tabs
+  const { quizzes, setQuizzes } = useQuiz();
 
   const renderHeaderRight = () => {
     if (activeTab === 'exam') {

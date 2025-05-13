@@ -1,4 +1,3 @@
-// QuizContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { addQuestionToDB, fetchQuizzes, fetchQuestions } from '../services/api';
 
@@ -9,7 +8,7 @@ export const QuizProvider = ({ children }) => {
   const [quizQuestions, setQuizQuestions] = useState({});
   const [selectedQuizzes, setSelectedQuizzes] = useState([]);
 
-  // ✅ Load quizzes + questions on startup
+  // Load quizzes + questions on startup
   useEffect(() => {
     const loadQuizzesAndQuestions = async () => {
       const fetchedQuizzes = await fetchQuizzes();
@@ -19,7 +18,7 @@ export const QuizProvider = ({ children }) => {
 
       for (const quiz of fetchedQuizzes) {
         const questions = await fetchQuestions(quiz.id);
-        console.log(`📥 Got questions for quiz ID ${quiz.id}:`, questions); // 🔍 NEW
+        console.log(`📥 Got questions for quiz ID ${quiz.id}:`, questions);
         allQuestions[quiz.id] = questions;
       }
 

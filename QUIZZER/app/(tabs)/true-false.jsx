@@ -26,7 +26,6 @@ export default function TrueFalseScreen() {
       return;
     }
 
-    // Explicit true-false validation
     if (selectedAnswer !== 'True' && selectedAnswer !== 'False') {
       setErrorMessage("Please select either True or False");
       setErrorVisible(true);
@@ -147,7 +146,7 @@ const styles = StyleSheet.create({
   selected: { 
     backgroundColor: '#009688', 
     borderColor: '#009688',
-    color: 'white' // ✅ Text will change to white on selection
+    color: 'white'
   },  
   modalOverlay: {
     flex: 1,

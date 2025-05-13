@@ -5,10 +5,10 @@ import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 export default function QuestionType() {
   const { quizName } = useLocalSearchParams();
   const router = useRouter();
-  const [modalVisible, setModalVisible] = useState(true); // ✅ Modal now starts visible
+  const [modalVisible, setModalVisible] = useState(true);
 
   const handleSelect = (screen) => {
-    setModalVisible(false); // ✅ Close modal before navigating
+    setModalVisible(false);
     setTimeout(() => router.push({ pathname: `/(tabs)/${screen}`, params: { quizName } }), 100);
   };
 
@@ -38,11 +38,11 @@ export default function QuestionType() {
             </TouchableOpacity>
 
             {/* Back Button */}
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => {
-                setModalVisible(false); // ✅ Hide modal
-                router.push({ pathname: '/(tabs)/quiz-screen', params: { name: quizName } }); // ✅ Navigate to quiz screen
-              }} 
+                setModalVisible(false);
+                router.push({ pathname: '/(tabs)/quiz-screen', params: { name: quizName } });
+              }}
               style={styles.backButton}
             >
               <Text style={styles.backText}>Back</Text>

@@ -19,7 +19,7 @@ export default function QuizReview() {
     const isCorrect =
       item.type === 'short-text'
         ? (item.answerEquals?.trim().toLowerCase() === item.userAnswer?.trim().toLowerCase() ||
-           (item.answerContains &&
+          (item.answerContains &&
             [...item.answerContains.trim().toLowerCase()].some(char =>
               item.userAnswer?.toLowerCase().includes(char))))
         : item.userAnswer === item.correctAnswer;
@@ -39,13 +39,13 @@ export default function QuizReview() {
 
   return (
     <View style={styles.container}>
-      
-        <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.push({ pathname: '/(tabs)/top-tabs' })}>
-                <Ionicons name="arrow-back" size={24} color="black" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>{'Review'}</Text>
-        </View>
+
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.push({ pathname: '/(tabs)/top-tabs' })}>
+          <Ionicons name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{'Review'}</Text>
+      </View>
 
       <FlatList
         data={allAnswers}
@@ -58,32 +58,31 @@ export default function QuizReview() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff', padding: 20 },
-    // header: { fontSize: 20, fontWeight: 'bold', marginBottom: 20 },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        marginBottom: 20,
-    },
-        headerTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginTop: -2,
-        padding: 5,
-    },
-    item: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee'
-    },
-    icon: {
-        marginRight: 10
-    },
-    questionText: {
-        fontSize: 16,
-        color: '#333'
-    }
+  container: { flex: 1, backgroundColor: '#fff', padding: 20 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginBottom: 20,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: -2,
+    padding: 5,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee'
+  },
+  icon: {
+    marginRight: 10
+  },
+  questionText: {
+    fontSize: 16,
+    color: '#333'
+  }
 });

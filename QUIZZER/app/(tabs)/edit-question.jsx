@@ -2,35 +2,35 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useQuiz } from '../../context/QuizContext'; // ✅ Import context
+import { useQuiz } from '../../context/QuizContext';
 import { updateQuestionInDB } from '../../services/api';
 
 export default function EditQuestionScreen() {
   const { quizName, questionId } = useLocalSearchParams();
-  const { quizQuestions, updateQuestion } = useQuiz(); // ✅ Get stored questions & update function
+  const { quizQuestions, updateQuestion } = useQuiz();
   const router = useRouter();
 
   const questionData = quizQuestions[quizName]?.find(q => q.id == questionId) || {};
 
   if (!questionData) {
-    return <Text>Error: Question data not found.</Text>; // ✅ Prevent rendering an empty object
+    return <Text>Error: Question data not found.</Text>;
   }
 
   const [editedQuestion, setEditedQuestion] = useState(questionData.question || '');
   const [editedCorrectAnswer, setEditedCorrectAnswer] = useState(questionData.correctAnswer || '');
 
   const handleSave = async () => {
-    // ✅ Call backend to update in MySQL
+    // Call backend to update in MySQL
     const response = await updateQuestionInDB(questionId, {
       question: editedQuestion.trim(),
       correctAnswer: editedCorrectAnswer.trim()
     });
 
     if (response?.success) {
-      // ✅ Update local state in context
+      // Update local state in context
       updateQuestion(quizName, questionId, editedQuestion, editedCorrectAnswer);
 
-      // ✅ Navigate back
+      // Navigate back
       router.push({ pathname: '/(tabs)/quiz-screen', params: { name: quizName } });
     } else {
       console.error('❌ Failed to update question in DB');

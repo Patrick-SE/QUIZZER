@@ -1,0 +1,20 @@
+CREATE DATABASE quizzer_db;
+
+USE quizzer_db;
+
+CREATE TABLE quizzes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE questions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quiz_id INT,
+    type ENUM('multiple-choice', 'short-text', 'true-false'),
+    question TEXT NOT NULL,
+    correct_answer TEXT,
+    wrong_answers JSON,
+    answer_contains TEXT,
+    answer_equals TEXT,
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
+);

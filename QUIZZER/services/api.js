@@ -2,26 +2,26 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
-const getHost = () => {
-  const fallback = 'localhost';
+// const getHost = () => {
+//   const fallback = 'localhost';
 
-  // Try newer manifest2 (used in SDK 49+ with Expo Go)
-  const manifestDebuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost;
+//   // Try newer manifest2 (used in SDK 49+ with Expo Go)
+//   const manifestDebuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost;
 
-  // Fallback to old manifest for older SDKs
-  const legacyHost = Constants.manifest?.debuggerHost;
+//   // Fallback to old manifest for older SDKs
+//   const legacyHost = Constants.manifest?.debuggerHost;
 
-  const fullHost = manifestDebuggerHost || legacyHost;
+//   const fullHost = manifestDebuggerHost || legacyHost;
 
-  if (!fullHost) return fallback;
+//   if (!fullHost) return fallback;
 
-  return fullHost.split(':')[0]; // extract just the IP
-};
+//   return fullHost.split(':')[0]; // extract just the IP
+// };
 
-const BASE_URL = `http://${getHost()}/quizzer_backend`;
-console.log("🔗 BASE_URL:", BASE_URL);
+// const BASE_URL = `http://${getHost()}/quizzer_backend`;
+// console.log("🔗 BASE_URL:", BASE_URL);
 
-// const BASE_URL = "http://192.168.1.13:8081/quizzer_backend";
+const BASE_URL = "http://192.168.1.13/quizzer_backend";
 
 console.log(BASE_URL);
 

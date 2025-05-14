@@ -16,15 +16,33 @@ export default function QuizzesContent() {
   const router = useRouter();
 
   useEffect(() => {
-    setQuizzes(prevQuizzes => [...prevQuizzes]);
+    loadQuizzes();
+  }, []);
 
-  }, [quizQuestions]);
+  // useEffect(() => {
+  //   setQuizzes(prevQuizzes => [...prevQuizzes]);
+
+  // }, [quizQuestions]);
 
   const loadQuizzes = async () => {
     const data = await fetchQuizzes();
-    console.log("Quizzes from MySQL:", data);
-    setQuizzes(data);
+    const sorted = data.sort((a, b) => a.id - b.id);
+    setQuizzes(sorted);
+
+    const allQuestions = {};
+    for (const quiz of sorted) {
+      const questions = await fetchQuestions(quiz.id);
+      allQuestions[quiz.id] = questions.sort((a, b) => a.id - b.id);
+    }
+    setQuizQuestions(allQuestions);
   };
+
+  //
+  //  const loadQuizzes = async () => {
+  //   const data = await fetchQuizzes();
+  //   console.log("Quizzes from MySQL:", data);
+  //   setQuizzes(data);
+  // };
 
   const handleAddQuiz = async () => {
     if (quizName.trim() !== '') {
@@ -64,6 +82,18 @@ export default function QuizzesContent() {
         });
 
         await loadQuizzes();
+        // const updatedQuizzes = await fetchQuizzes();
+        // setQuizzes(updatedQuizzes);
+
+        // // Refresh all quiz questions
+        // for (const quiz of updatedQuizzes) {
+        //   const updatedQuestions = await fetchQuestions(quiz.id);
+        //   setQuizQuestions(prev => ({
+        //     ...prev,
+        //     [quiz.id]: updatedQuestions
+        //   }));
+        // }
+
       } else {
         console.error("Failed to delete quiz!");
       }
@@ -89,8 +119,8 @@ export default function QuizzesContent() {
   return (
     <View style={styles.container}>
       <FlatList
-        data={quizzes}
-        keyExtractor={(item, index) => index.toString()}
+        data={[...quizzes].sort((a, b) => a.id - b.id)}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => router.push({ pathname: '/(tabs)/quiz-screen', params: { name: item.name, id: item.id.toString() }, })}
@@ -102,7 +132,7 @@ export default function QuizzesContent() {
             <View style={styles.quizItem}>
               <Text style={styles.quizTitle}>{item.name}</Text>
               <Text style={styles.questionCount}>
-                {quizQuestions[item.id] ? quizQuestions[item.id].length : 0} questions
+                {quizQuestions[item.id]?.length || 0} questions
               </Text>
             </View>
           </TouchableOpacity>

@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useQuiz } from '../../context/QuizContext';
-import { deleteQuestion } from "../../services/api";
+import { deleteQuestion,fetchQuestions } from "../../services/api";
 
 export default function QuizScreen() {
   const params = useLocalSearchParams();
@@ -16,9 +16,6 @@ export default function QuizScreen() {
 
   const [confirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
-
-  // Fetch latest from context using quizId instead of quizName
-  const questions = quizQuestions[quizId] || [];
 
   useEffect(() => {
     if (params.name) setQuizName(params.name);
@@ -46,11 +43,17 @@ export default function QuizScreen() {
 
       if (success) {
         removeQuestion(quizId, selectedQuestion.id);
+        setQuizQuestions(prev => ({
+          ...prev,
+          [quizId]: updatedQuestions.sort((a, b) => a.id - b.id)
+        }));
       } else {
         console.error("❌ Failed to delete question");
       }
     }
   };
+
+  const questions = (quizQuestions[quizId] || []).sort((a, b) => a.id - b.id);
 
   return (
     <View style={styles.container}>
@@ -72,8 +75,8 @@ export default function QuizScreen() {
       ) : (
         <FlatList
           data={questions}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item, index }) => {
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => {
 
             // Update the answer display logic to be more robust
             let answerDisplay = 'No answer';

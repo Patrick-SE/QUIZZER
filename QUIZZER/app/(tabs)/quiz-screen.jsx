@@ -3,7 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useQuiz } from '../../context/QuizContext';
-import { deleteQuestion,fetchQuestions } from "../../services/api";
+import { deleteQuestion, fetchQuestions } from "../../services/api";
 
 export default function QuizScreen() {
   const params = useLocalSearchParams();
@@ -12,7 +12,7 @@ export default function QuizScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [quizName, setQuizName] = useState(params.name || '');
   const [quizId, setQuizId] = useState(params.id || '');
-  const { quizQuestions, removeQuestion } = useQuiz();
+  const { quizQuestions, removeQuestion, setQuizQuestions } = useQuiz();
 
   const [confirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
@@ -42,16 +42,13 @@ export default function QuizScreen() {
       setSelectedQuestion(null);
 
       if (success) {
-        removeQuestion(quizId, selectedQuestion.id);
-        setQuizQuestions(prev => ({
-          ...prev,
-          [quizId]: updatedQuestions.sort((a, b) => a.id - b.id)
-        }));
+        removeQuestion(quizId, selectedQuestion.id); // already updates context
       } else {
         console.error("❌ Failed to delete question");
       }
     }
   };
+
 
   const questions = (quizQuestions[quizId] || []).sort((a, b) => a.id - b.id);
 
@@ -160,13 +157,13 @@ export default function QuizScreen() {
               "{selectedQuestion?.question}"
             </Text>
             <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.modalBtn, { backgroundColor: '#ccc' }]} 
+              <TouchableOpacity
+                style={[styles.modalBtn, { backgroundColor: '#ccc' }]}
                 onPress={() => setConfirmDeleteModalVisible(false)}>
                 <Text style={{ fontWeight: 'bold' }}>Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.modalBtn, { backgroundColor: '#F44336' }]} 
+              <TouchableOpacity
+                style={[styles.modalBtn, { backgroundColor: '#F44336' }]}
                 onPress={handleDeleteQuestion}>
                 <Text style={{ color: 'white', fontWeight: 'bold' }}>Delete</Text>
               </TouchableOpacity>
@@ -262,7 +259,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginTop: 10,
   },
-    modalBtn: {
+  modalBtn: {
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 6,

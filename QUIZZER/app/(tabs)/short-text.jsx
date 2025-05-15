@@ -14,29 +14,41 @@ export default function ShortTextScreen() {
   const router = useRouter();
 
   const questionData = quizQuestions[quizId]?.find(q => q.id === parseInt(questionId)) || {};
-  
+
   const [question, setQuestion] = useState(questionData.question || '');
   const [answerContains, setAnswerContains] = useState(questionData.answerContains || '');
   const [answerEquals, setAnswerEquals] = useState(questionData.answerEquals || '');
 
   const handleSave = async () => {
-    if (!question.trim()) {
+    const trimmedQuestion = question.trim();
+    const trimmedContains = answerContains.trim();
+    const trimmedEquals = answerEquals.trim();
+
+    if (!trimmedQuestion) {
       setErrorMessage("Question can't be blank");
       setErrorVisible(true);
       return;
     }
-  
-    // ✅ Ensure only one answer type is stored
-    let updatedAnswerContains = answerContains.trim();
-    let updatedAnswerEquals = answerEquals.trim();
-  
-    if (updatedAnswerContains) updatedAnswerEquals = '';
-    else if (updatedAnswerEquals)  updatedAnswerContains = '';
-  
+
+    if (!trimmedContains && !trimmedEquals) {
+      setErrorMessage("You must fill in either 'Contains' or 'Equals'.");
+      setErrorVisible(true);
+      return;
+    }
+
+    if (trimmedContains && trimmedEquals) {
+      setErrorMessage("You can only fill in one: 'Contains' or 'Equals', not both.");
+      setErrorVisible(true);
+      return;
+    }
+
+    const updatedAnswerContains = trimmedContains;
+    const updatedAnswerEquals = trimmedEquals;
+
     if (questionId) {
       const response = await updateQuestionInDB(questionId, {
         type: 'short-text',
-        question: question.trim(),
+        question: trimmedQuestion,
         correctAnswer: '',
         wrongAnswers: [],
         answerContains: updatedAnswerContains,
@@ -52,7 +64,7 @@ export default function ShortTextScreen() {
       updateQuestion(
         quizId,
         questionId,
-        question,
+        trimmedQuestion,
         '',
         [],
         updatedAnswerContains,
@@ -61,21 +73,22 @@ export default function ShortTextScreen() {
     } else {
       addQuestion(quizId, {
         type: 'short-text',
-        question,
+        question: trimmedQuestion,
         answerContains: updatedAnswerContains,
         answerEquals: updatedAnswerEquals,
         quiz_id: parseInt(quizId),
       });
     }
-  
+
     router.push({ pathname: '/(tabs)/quiz-screen', params: { name: quizName, id: quizId } });
-  };  
+  };
+
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push({ pathname: '/(tabs)/quiz-screen', params: { name: quizName } })}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Short Text</Text>
@@ -175,5 +188,5 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: 'white',
     fontWeight: 'bold',
-  },  
+  },
 });

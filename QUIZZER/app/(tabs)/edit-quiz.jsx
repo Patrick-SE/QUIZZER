@@ -25,8 +25,7 @@ export default function EditQuiz() {
       console.log("Raw API Response:", success);
   
       if (success) {
-        router.push('/(tabs)/top-tabs');
-        router.replace({ pathname: '/(tabs)/quiz-screen', params: { name: newName.trim() } });
+        router.replace({ pathname: '/(tabs)/quiz-screen', params: { name: newName.trim(), id: quizToUpdate.id.toString() } });
       } else {
         console.error("Failed to update quiz in MySQL!");
       }

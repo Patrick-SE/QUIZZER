@@ -19,8 +19,9 @@ export default function TrueFalseScreen() {
   const [selectedAnswer, setSelectedAnswer] = useState(questionData.correctAnswer || null);
 
   const handleSave = async () => {
-    console.log('Saving with:', { question, selectedAnswer });
-    if (!question.trim()) {
+    const trimmedQuestion = question.trim();
+
+    if (!trimmedQuestion) {
       setErrorMessage("Question can't be blank");
       setErrorVisible(true);
       return;
@@ -31,17 +32,11 @@ export default function TrueFalseScreen() {
       setErrorVisible(true);
       return;
     }
-  
-    if (selectedAnswer === null) {
-      setErrorMessage("Please select an answer");
-      setErrorVisible(true);
-      return;
-    }
-  
+
     if (questionId) {
       const response = await updateQuestionInDB(questionId, {
         type: 'true-false',
-        question: question.trim(),
+        question: trimmedQuestion,
         correctAnswer: selectedAnswer.trim(),
         wrongAnswers: [],
         answerContains: '',
@@ -57,7 +52,7 @@ export default function TrueFalseScreen() {
       updateQuestion(
         quizId,
         questionId,
-        question,
+        trimmedQuestion,
         selectedAnswer,
         [],
         '',
@@ -66,23 +61,24 @@ export default function TrueFalseScreen() {
     } else {
       addQuestion(quizId, {
         type: 'true-false',
-        question: question.trim(),
+        question: trimmedQuestion,
         correctAnswer: selectedAnswer,
         quiz_id: parseInt(quizId),
         wrongAnswers: [],
         answerContains: '',
         answerEquals: ''
       });
-    }  
-  
+    }
+
     router.push({ pathname: '/(tabs)/quiz-screen', params: { name: quizName, id: quizId } });
-  };  
+  };
+
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push({ pathname: '/(tabs)/quiz-screen', params: { name: quizName } })}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>True or False</Text>
@@ -143,11 +139,11 @@ const styles = StyleSheet.create({
   answerContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 },
   answerOption: { paddingVertical: 12, paddingHorizontal: 20, borderWidth: 1, borderColor: '#ccc', borderRadius: 6 },
   answerText: { fontSize: 16 },
-  selected: { 
-    backgroundColor: '#009688', 
+  selected: {
+    backgroundColor: '#009688',
     borderColor: '#009688',
     color: 'white'
-  },  
+  },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -182,5 +178,5 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: 'white',
     fontWeight: 'bold',
-  },  
+  },
 });

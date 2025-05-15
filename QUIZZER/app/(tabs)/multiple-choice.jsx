@@ -29,15 +29,22 @@ export default function MultipleChoiceScreen() {
   const [wrongAnswer3, setWrongAnswer3] = useState(questionData.wrongAnswers?.[2] || '');
 
   const handleSave = async () => {
-    if (!question.trim()) {
-      setErrorMessage("Question can't be blank");
+    const trimmedQuestion = question.trim();
+    const trimmedCorrect = correctAnswer.trim();
+    const trimmedWrong1 = wrongAnswer1.trim();
+    const trimmedWrong2 = wrongAnswer2.trim();
+    const trimmedWrong3 = wrongAnswer3.trim();
+
+    // Validate empty fields
+    if (!trimmedQuestion || !trimmedCorrect || !trimmedWrong1 || !trimmedWrong2 || !trimmedWrong3) {
+      setErrorMessage("Please fill in the question, correct answer, and all 3 wrong answers.");
       setErrorVisible(true);
       return;
     }
 
-    const formattedQuestion = question.trim().toLowerCase();
-    const answers = [correctAnswer, wrongAnswer1, wrongAnswer2, wrongAnswer3]
-      .map(ans => ans.trim().toLowerCase());
+    // Make sure question and answers are not the same
+    const formattedQuestion = trimmedQuestion.toLowerCase();
+    const answers = [trimmedCorrect, trimmedWrong1, trimmedWrong2, trimmedWrong3].map(ans => ans.toLowerCase());
 
     if (answers.includes(formattedQuestion)) {
       setErrorMessage("The question and answers must be different.");
@@ -45,13 +52,13 @@ export default function MultipleChoiceScreen() {
       return;
     }
 
+    // All good, proceed with save
     if (questionId) {
-      // Update both MySQL and context
       const response = await updateQuestionInDB(questionId, {
         type: 'multiple-choice',
-        question: question.trim(),
-        correctAnswer: correctAnswer.trim(),
-        wrongAnswers: [wrongAnswer1.trim(), wrongAnswer2.trim(), wrongAnswer3.trim()],
+        question: trimmedQuestion,
+        correctAnswer: trimmedCorrect,
+        wrongAnswers: [trimmedWrong1, trimmedWrong2, trimmedWrong3],
         answerContains: '',
         answerEquals: ''
       });
@@ -61,18 +68,18 @@ export default function MultipleChoiceScreen() {
       updateQuestion(
         quizId,
         questionId,
-        question,
-        correctAnswer,
-        [wrongAnswer1, wrongAnswer2, wrongAnswer3],
+        trimmedQuestion,
+        trimmedCorrect,
+        [trimmedWrong1, trimmedWrong2, trimmedWrong3],
         '',
         ''
       );
     } else {
       addQuestion(quizId, {
         type: 'multiple-choice',
-        question,
-        correctAnswer,
-        wrongAnswers: [wrongAnswer1, wrongAnswer2, wrongAnswer3],
+        question: trimmedQuestion,
+        correctAnswer: trimmedCorrect,
+        wrongAnswers: [trimmedWrong1, trimmedWrong2, trimmedWrong3],
         quiz_id: quizId
       });
     }
@@ -84,7 +91,7 @@ export default function MultipleChoiceScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push({ pathname: '/(tabs)/quiz-screen', params: { name: quizName } })}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Multiple Choice</Text>
